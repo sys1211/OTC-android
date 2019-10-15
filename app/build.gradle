@@ -4,8 +4,8 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.otcbase.merchant"
-        minSdkVersion versions.minSdk
-        targetSdkVersion versions.compileSdk
+        minSdkVersion 18
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -25,15 +25,4 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    //noinspection GradleDependency
-    implementation 'com.jakewharton:butterknife:8.4.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
-    implementation project(path: ':nt_library')
-    implementation project(path: ':nt_track')
-    implementation project(path: ':third_MPChartLib')
-    implementation project(path: ':third_dialogplus')
-    implementation project(path: ':nt_theme')
-    implementation project(path: ':nt_network')
-    implementation project(path: ':nt_log')
-
 }

@@ -1,2 +1,2 @@
-include ':app', ':third_MPChartLib', ':nt_library', ':nt_track', ':ViewPagerIndicator_1.1.6-plus', ':nt_log', ':UpdatePlugin-3.1.2', ':volley-1.1.1-20180118.172331-6', ':nt_network', ':third_dialogplus', ':nt_theme'
+include ':app'
 rootProject.name='OTC-Android'

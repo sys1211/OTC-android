@@ -1,4 +1,4 @@
-package com.otcbase.merchant;
+package com.example.otc_android;
 
 import androidx.appcompat.app.AppCompatActivity;
 
