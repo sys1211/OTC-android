@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="lib_actionbar_height">44dp</dimen>
+    <dimen name="lib_default_btn_corner_radius">4dp</dimen>
+    <dimen name="lib_default_corner_radius">4dp</dimen>
+    <dimen name="lib_default_shadow_radius">4dp</dimen>
+
+    <dimen name="lib_text_18">18sp</dimen>
+</resources>

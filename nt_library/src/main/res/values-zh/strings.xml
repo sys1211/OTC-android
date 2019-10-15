@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lib_today">今天</string>
+    <string name="lib_yesterday">昨天</string>
+
+    <string name="lib_search">搜索</string>
+
+    <string name="lib_tip">提示</string>
+
+    <string name="lib_continue">继续</string>
+
+    <string name="lib_notification_error_ssl_cert_invalid">无效的SSL证书，确定继续打开吗?</string>
+</resources>

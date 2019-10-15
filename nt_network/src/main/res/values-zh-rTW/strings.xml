@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="api_error_parse">解析錯誤</string>
+    <string name="api_error_timeout">請求超時</string>
+    <string name="api_error_no_connection">無網絡連接</string>
+    <string name="api_error_auth_failure">認證失敗</string>
+    <string name="api_error_redirect">重定向錯誤</string>
+    <string name="api_error_server">服務器錯誤</string>
+    <string name="api_error_client">請求錯誤</string>
+    <string name="api_error_network">網絡錯誤</string>
+    <string name="api_error_unknown">未知錯誤</string>
+
+</resources>

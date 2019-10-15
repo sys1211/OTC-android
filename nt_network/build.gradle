@@ -1,0 +1,39 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion versions.compileSdk
+
+
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    testImplementation deps.junit
+    androidTestImplementation deps.support.test.runner
+    androidTestImplementation deps.support.test.rules
+    implementation deps.support.annotations
+
+    implementation deps.support.compat
+
+    api 'com.google.code.gson:gson:2.8.5'
+
+    api project(':volley-1.1.1-20180118.172331-6')
+    implementation project(':nt_log')
+
+
+}

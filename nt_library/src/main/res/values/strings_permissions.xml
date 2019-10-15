@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_request_rationale">To ensure that all features work properly, please allow the following permissions. We will not misuse or share any information with 3rd party partners.</string>
+
+    <string name="permission_denied_tip">Some features may not work correctly</string>
+</resources>

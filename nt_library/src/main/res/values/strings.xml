@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lib_today">Today</string>
+    <string name="lib_yesterday">Yesterday</string>
+
+    <string name="lib_search">Search</string>
+
+    <string name="lib_tip">Warning</string>
+
+    <string name="lib_continue">Continue</string>
+
+    <string name="lib_notification_error_ssl_cert_invalid">Invalid SSL certificate. Do you want to continue?</string>
+</resources>

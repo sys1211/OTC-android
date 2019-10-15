@@ -1,0 +1,20 @@
+<resources>
+
+    <string name="api_error_parse">Parse error</string>
+
+    <string name="api_error_timeout">Request timed out</string>
+
+    <string name="api_error_no_connection">No Internet connection</string>
+
+    <string name="api_error_auth_failure">Authentication failed</string>
+
+    <string name="api_error_redirect">Redirection error</string>
+
+    <string name="api_error_server">Server error</string>
+
+    <string name="api_error_client">Client error</string>
+
+    <string name="api_error_network">Connectivity error</string>
+
+    <string name="api_error_unknown">Unknown error</string>
+</resources>

@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('updatepluginlib-3.1.2.aar'))

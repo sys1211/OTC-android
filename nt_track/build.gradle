@@ -1,0 +1,36 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion versions.compileSdk
+
+
+
+    defaultConfig {
+        minSdkVersion versions.minSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+
+    testImplementation deps.junit
+    androidTestImplementation deps.support.test.runner
+    androidTestImplementation deps.support.test.rules
+
+    implementation 'com.sensorsdata.analytics.android:SensorsAnalyticsSDK:3.2.0'
+    implementation project(':nt_library')
+    implementation project(':nt_log')
+}
