@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
                 return super.shouldInterceptRequest(view, request);
             }
         });
-
+        wvOTC.getSettings().setJavaScriptEnabled(true);
         // 载入内容
         wvOTC.loadUrl("https://www.otcbase.com/zh-CN/mobile/account/sign-in");
     }
