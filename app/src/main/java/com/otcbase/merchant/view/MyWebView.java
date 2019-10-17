@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -37,6 +38,7 @@ import com.otcbase.merchant.utils.LogUtils;
 public class MyWebView extends WebView {
     private IOpenFileChooser openFileChooser;
     private ProgressBar progressBar;
+    private Context mContext;
 
     public MyWebView(Context context) {
         super(context);
@@ -217,11 +219,13 @@ public class MyWebView extends WebView {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                skipPayment(url);
                 return super.shouldOverrideUrlLoading(view, url);
             }
 
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                skipPayment(url);
                 return super.shouldInterceptRequest(view, url);
             }
 
@@ -265,6 +269,39 @@ public class MyWebView extends WebView {
 
         setVerticalScrollBarEnabled(false);
         setHorizontalScrollBarEnabled(false);
+    }
+
+    private void skipPayment(String url) {
+        if (url.contains("platformapi/startapp")) {
+            Intent intent;
+            try {
+                intent = Intent.parseUri(url,
+                        Intent.URI_INTENT_SCHEME);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setComponent(null);
+                mContext.startActivity(intent);
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+        }
+        else if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
+                && (url.contains("platformapi") && url.contains("startApp"))) {
+            Intent intent;
+            try {
+                intent = Intent.parseUri(url,
+                        Intent.URI_INTENT_SCHEME);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setComponent(null);
+                mContext.startActivity(intent);
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+        } else if (url.startsWith("weixin://wap/pay?")) {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            mContext.startActivity(intent);
+        }
     }
 
     public interface IOpenFileChooser {
