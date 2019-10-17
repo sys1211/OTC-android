@@ -271,7 +271,7 @@ public class MyWebView extends WebView {
         void onOpenFileChooser(ValueCallback<Uri> filePathCallback, String[] acceptTypes);
     }
 
-    private int dp2px(Context context, float dp) {
+    public int dp2px(Context context, float dp) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);
     }

@@ -1,32 +1,39 @@
 package com.otcbase.merchant;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DrawableUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.RotateAnimation;
 import android.webkit.ValueCallback;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.DialogPlusBuilder;
+import com.orhanobut.dialogplus.OnCancelListener;
+import com.orhanobut.dialogplus.OnDismissListener;
+import com.orhanobut.dialogplus.ViewHolder;
+import com.otcbase.merchant.quickadapter.BaseAdapterHelper;
+import com.otcbase.merchant.quickadapter.QuickAdapter;
 import com.otcbase.merchant.utils.FileUtils;
 import com.otcbase.merchant.utils.ImagePickerAgent;
-import com.otcbase.merchant.utils.LogUtils;
 import com.otcbase.merchant.utils.PermissionUtils;
 import com.otcbase.merchant.utils.TakeCaptureAgent;
 import com.otcbase.merchant.view.MyWebView;
@@ -160,7 +167,13 @@ public class MainActivity extends AppCompatActivity {
                     };
 
 
-                    filePathCallback.onReceiveValue(null);
+                    DialogPlus dialogPlus = createActionDialog(baseActivity, actions, onItemClickListener, null, new OnCancelListener() {
+                        @Override
+                        public void onCancel(@NonNull DialogPlus dialog) {
+                            filePathCallback.onReceiveValue(null);
+                        }
+                    });
+                    dialogPlus.show();
 
                 } else {
                     if (!PermissionUtils.checkWriteExternalStorage(baseActivity)) {
@@ -262,5 +275,56 @@ public class MainActivity extends AppCompatActivity {
     public void startActivityForResult(Intent intent, OnActivityResultListener listener) {
         startActivityForResult(intent, REQUEST_CODE_START_FOR_RESULT);
         this.mActivityResultListener = listener;
+    }
+
+    public DialogPlus createActionDialog(Context context, List<String> actions, final AdapterView.OnItemClickListener itemClickListener,
+                                                OnDismissListener dismissListener, final OnCancelListener cancelListener) {
+        QuickAdapter adapter = new QuickAdapter<String>(context, R.layout.layout_dialog_action_item, actions) {
+            @Override
+            protected void convert(BaseAdapterHelper helper, String item) {
+                helper.setText(R.id.lib_tv_dialog_action_title, item);
+                helper.setTextColor(R.id.lib_tv_dialog_action_title, getResources().getColor(R.color.colorFont));
+            }
+        };
+        final DialogPlus dialogPlus;
+        int margin = wvOTC.dp2px(context, 10);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.layout_dialog_action, null);
+        view.setBackgroundColor(Color.TRANSPARENT);
+
+        DialogPlusBuilder builder = DialogPlus.newDialog(context)
+                .setOnDismissListener(dismissListener)
+                .setOnCancelListener(cancelListener)
+                .setContentHolder(new ViewHolder(view))
+                .setMargin(margin, 0, margin, margin)
+                .setCancelable(true)
+                .setContentBackgroundResource(android.R.color.transparent)
+                .setGravity(Gravity.BOTTOM);
+        dialogPlus = builder.create();
+        ListView listView = view.findViewById(R.id.lib_lv_dialog_action);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                dialogPlus.dismiss();
+                itemClickListener.onItemClick(parent, view, position, id);
+            }
+        });
+        listView.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+
+        TextView viewCancel = view.findViewById(R.id.lib_btn_dialog_action_cancel);
+        viewCancel.setTextColor(getResources().getColor(R.color.colorFont));
+        viewCancel.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+        viewCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogPlus.dismiss();
+                if (cancelListener != null) {
+                    cancelListener.onCancel(dialogPlus);
+                }
+            }
+        });
+        return dialogPlus;
+
     }
 }

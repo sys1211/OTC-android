@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':third_dialogplus'
 rootProject.name='OTC-Android'
