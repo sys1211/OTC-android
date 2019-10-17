@@ -35,7 +35,6 @@ import com.otcbase.merchant.utils.LogUtils;
 
 
 public class MyWebView extends WebView {
-    private WebViewClient mClient;
     private IOpenFileChooser openFileChooser;
     private ProgressBar progressBar;
 
@@ -53,12 +52,6 @@ public class MyWebView extends WebView {
         super(context, attrs, defStyleAttr);
         init(context);
     }
-
-    @Override
-    public void setWebViewClient(WebViewClient client) {
-        this.mClient = client;
-    }
-
 
     public void setOpenFileChooser(IOpenFileChooser openFileChooser) {
         this.openFileChooser = openFileChooser;
@@ -79,14 +72,15 @@ public class MyWebView extends WebView {
         settings.setAppCachePath(appCachePath);
         settings.setAllowFileAccess(true);
         settings.setAppCacheEnabled(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
 
         progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
-        progressBar.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(context, 5)));
+        progressBar.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(context, 2)));
         progressBar.setProgressDrawable(getResources().getDrawable(R.drawable.bg_webview_progress_color));
         progressBar.setMax(100);
         addView(progressBar);
 
-        super.setWebChromeClient(new WebChromeClient() {
+        setWebChromeClient(new WebChromeClient() {
 
             @Keep
             public void openFileChooser(final ValueCallback<Uri> filePathCallback) {
@@ -199,54 +193,35 @@ public class MyWebView extends WebView {
             }
         });
 
-        super.setWebViewClient(new WebViewClient() {
+        setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                if (mClient != null) {
-                    mClient.onPageStarted(view, url, favicon);
-                }
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                if (mClient != null) {
-                    mClient.onPageFinished(view, url);
-                }
-
             }
 
             @Override
             public void onLoadResource(WebView view, String url) {
                 super.onLoadResource(view, url);
-                if (mClient != null) {
-                    mClient.onLoadResource(view, url);
-                }
             }
 
             @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onPageCommitVisible(WebView view, String url) {
                 super.onPageCommitVisible(view, url);
-                if (mClient != null) {
-                    mClient.onPageCommitVisible(view, url);
-                }
             }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (mClient != null) {
-                    return mClient.shouldOverrideUrlLoading(view, url);
-                }
                 return super.shouldOverrideUrlLoading(view, url);
             }
 
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                if (mClient != null) {
-                    return mClient.shouldInterceptRequest(view, url);
-                }
                 return super.shouldInterceptRequest(view, url);
             }
 
@@ -284,9 +259,6 @@ public class MyWebView extends WebView {
 
             @Override
             public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
-                if (mClient != null) {
-                    return mClient.shouldOverrideKeyEvent(view, event);
-                }
                 return super.shouldOverrideKeyEvent(view, event);
             }
         });

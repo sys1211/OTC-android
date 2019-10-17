@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.RotateAnimation;
@@ -61,17 +62,19 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_go_back:
-//                if (wvOTC != null && wvOTC.canGoBack()){
+                if (wvOTC != null) {
                     wvOTC.goBack();
-//                }
+                }
                 break;
             case R.id.iv_go_forward:
-                if (wvOTC != null && wvOTC.canGoForward()){
+                if (wvOTC != null) {
                     wvOTC.goForward();
                 }
                 break;
             case R.id.iv_reload:
-                wvOTC.reload();
+                if (wvOTC != null) {
+                    wvOTC.reload();
+                }
                 ivReload.startAnimation(animationSet);
                 break;
             default:
@@ -94,15 +97,14 @@ public class MainActivity extends AppCompatActivity {
         rotateAnimation.setDuration(500);
         animationSet.addAnimation(rotateAnimation);
 
-        ivGoBack.setEnabled(false);
-        ivGoForward.setEnabled(false);
         wvOTC.setOpenFileChooser(new MyWebView.IOpenFileChooser() {
             private boolean checkAcceptTypeImage(String[] acceptTypes) {
                 if (acceptTypes != null && acceptTypes.length > 0) {
                     String arrayStr = Arrays.toString(acceptTypes);
                     if (arrayStr.contains("image/")) {
-                        return true;
+
                     }
+                    return true;
                 }
                 return false;
             }
@@ -167,16 +169,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                     i.addCategory(Intent.CATEGORY_OPENABLE);
-
-                    // do not use accept type from h5 , may occur issue
                     i.setType("*/*");
-
-//                        if (acceptTypes.length > 0) {
-//                            i.setType(acceptTypes[0]);
-//                        } else {
-//                            i.setType("*/*");
-//                        }
-
                     Intent intent = Intent.createChooser(i, getResources().getString(R.string.select));
                     startActivityForResult(intent, new OnActivityResultListener() {
                         @Override
@@ -198,57 +191,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        wvOTC.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-            }
-
-            @Override
-            public void onPageCommitVisible(WebView view, String url) {
-                super.onPageCommitVisible(view, url);
-                LogUtils.d(" onPageCommitVisible : " + url);
-                if (isFinishing()) {
-                    return;
-                }
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                if (!isFinishing()) {
-                    String originalUrl = wvOTC.copyBackForwardList().getCurrentItem().getOriginalUrl();
-                    boolean isCanGoBack = wvOTC.canGoBack() && !(originalUrl.equals(url) || originalUrl.equals(url + "/index"));
-                    ivGoBack.setEnabled(isCanGoBack);
-                    ivGoForward.setEnabled(wvOTC.canGoForward());
-                }
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return super.shouldOverrideUrlLoading(view, url);
-            }
-
-            @Nullable
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                return super.shouldInterceptRequest(view, request);
-            }
-        });
-        wvOTC.getSettings().setLoadWithOverviewMode(true);
-        wvOTC.getSettings().setUseWideViewPort(true);
         wvOTC.getSettings().setJavaScriptEnabled(true);
-        wvOTC.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-        wvOTC.getSettings().setDomStorageEnabled(true);
-        wvOTC.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
-        String appCachePath = getCacheDir().getAbsolutePath();
-        wvOTC.getSettings().setAppCachePath(appCachePath);
-        wvOTC.getSettings().setAllowFileAccess(true);
-        wvOTC.getSettings().setAppCacheEnabled(true);
-        wvOTC.setProgressBarColor(getResources().getDrawable(R.drawable.bg_webview_progress_color));
+        wvOTC.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+
         // 载入内容
-        wvOTC.loadUrl("https://www.otcbase.com/zh-CN/mobile/account/sign-in");
+        wvOTC.loadUrl("https://dev.otcbase.com/mobile/account/sign-in");
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (wvOTC != null) {
+            wvOTC.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
+            wvOTC.clearHistory();
+
+            ((ViewGroup) wvOTC.getParent()).removeView(wvOTC);
+            wvOTC.destroy();
+            wvOTC = null;
+        }
+        super.onDestroy();
     }
 
     @Override

@@ -23,7 +23,8 @@ public class LaunchScreenActivity extends AppCompatActivity {
     @BindView(R.id.tv_launch_screen)
     TextView tvLaunchScreen;
 
-    protected Timer mCountDownTimer;
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +44,20 @@ public class LaunchScreenActivity extends AppCompatActivity {
         tvParams.bottomMargin = (int) (heightPixels * 0.04);
         tvLaunchScreen.setLayoutParams(tvParams);
 
-        new Handler().postDelayed(new Runnable() {
+
+        runnable = new Runnable() {
             @Override
             public void run() {
                 startActivity(new Intent(LaunchScreenActivity.this, MainActivity.class));
+                finish();
             }
-        },2000);
+        };
+        handler.postDelayed(runnable, 2000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(runnable);
     }
 }
