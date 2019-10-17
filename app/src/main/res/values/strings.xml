@@ -9,4 +9,5 @@
     <string name="user_info_action_album">从相册选择</string>
     <string name="user_info_action_camera">拍摄照片</string>
     <string name="select">请选择</string>
+    <string name="welcome">Welcome to OTCBASE</string>
 </resources>

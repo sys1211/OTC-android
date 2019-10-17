@@ -64,6 +64,10 @@ public class MyWebView extends WebView {
         this.openFileChooser = openFileChooser;
     }
 
+    public void setProgressBarColor(Drawable drawable){
+        progressBar.setProgressDrawable(drawable);
+    }
+
     private void init(Context context) {
         WebSettings settings = getSettings();
         settings.setLoadWithOverviewMode(true);
@@ -77,7 +81,7 @@ public class MyWebView extends WebView {
         settings.setAppCacheEnabled(true);
 
         progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
-        progressBar.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(context, 2)));
+        progressBar.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(context, 5)));
         progressBar.setProgressDrawable(getResources().getDrawable(R.drawable.bg_webview_progress_color));
         progressBar.setMax(100);
         addView(progressBar);

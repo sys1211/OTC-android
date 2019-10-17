@@ -17,6 +17,7 @@ import android.view.animation.RotateAnimation;
 import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
@@ -60,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_go_back:
-                if (wvOTC != null && wvOTC.canGoBack()){
+//                if (wvOTC != null && wvOTC.canGoBack()){
                     wvOTC.goBack();
-                }
+//                }
                 break;
             case R.id.iv_go_forward:
                 if (wvOTC != null && wvOTC.canGoForward()){
@@ -202,10 +203,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                if (!isFinishing()) {
-                    ivGoBack.setEnabled(wvOTC.canGoBack());
-                    ivGoForward.setEnabled(wvOTC.canGoForward());
-                }
             }
 
             @Override
@@ -220,6 +217,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                if (!isFinishing()) {
+                    String originalUrl = wvOTC.copyBackForwardList().getCurrentItem().getOriginalUrl();
+                    boolean isCanGoBack = wvOTC.canGoBack() && !(originalUrl.equals(url) || originalUrl.equals(url + "/index"));
+                    ivGoBack.setEnabled(isCanGoBack);
+                    ivGoForward.setEnabled(wvOTC.canGoForward());
+                }
             }
 
             @Override
@@ -233,7 +236,17 @@ public class MainActivity extends AppCompatActivity {
                 return super.shouldInterceptRequest(view, request);
             }
         });
+        wvOTC.getSettings().setLoadWithOverviewMode(true);
+        wvOTC.getSettings().setUseWideViewPort(true);
         wvOTC.getSettings().setJavaScriptEnabled(true);
+        wvOTC.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        wvOTC.getSettings().setDomStorageEnabled(true);
+        wvOTC.getSettings().setAppCacheMaxSize(1024 * 1024 * 8);
+        String appCachePath = getCacheDir().getAbsolutePath();
+        wvOTC.getSettings().setAppCachePath(appCachePath);
+        wvOTC.getSettings().setAllowFileAccess(true);
+        wvOTC.getSettings().setAppCacheEnabled(true);
+        wvOTC.setProgressBarColor(getResources().getDrawable(R.drawable.bg_webview_progress_color));
         // 载入内容
         wvOTC.loadUrl("https://www.otcbase.com/zh-CN/mobile/account/sign-in");
     }
