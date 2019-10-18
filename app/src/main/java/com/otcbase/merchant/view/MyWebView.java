@@ -31,6 +31,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.otcbase.merchant.MainActivity;
 import com.otcbase.merchant.R;
 import com.otcbase.merchant.utils.LogUtils;
 
@@ -63,7 +64,7 @@ public class MyWebView extends WebView {
         progressBar.setProgressDrawable(drawable);
     }
 
-    private void init(Context context) {
+    private void init(final Context context) {
         WebSettings settings = getSettings();
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
@@ -219,13 +220,36 @@ public class MyWebView extends WebView {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                skipPayment(url);
-                return super.shouldOverrideUrlLoading(view, url);
+
+                if(url.startsWith("alipays:") || url.startsWith("alipay")) {
+                    try {
+                        context.startActivity(new Intent("android.intent.action.VIEW", Uri.parse(url)));
+                    } catch (Exception e) {
+                        new AlertDialog.Builder(context)
+                                .setMessage("未检测到支付宝客户端，请安装后重试。")
+                                .setPositiveButton("立即安装", new DialogInterface.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Uri alipayUrl = Uri.parse("https://d.alipay.com");
+                                        context.startActivity(new Intent("android.intent.action.VIEW", alipayUrl));
+                                    }
+                                }).setNegativeButton("取消", null).show();
+                    }
+                    return true;
+                }
+                // ------- 处理结束 -------
+
+                if (!(url.startsWith("http") || url.startsWith("https"))) {
+                    return true;
+                }
+
+                view.loadUrl(url);
+                return true;
             }
 
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-                skipPayment(url);
                 return super.shouldInterceptRequest(view, url);
             }
 
@@ -269,39 +293,6 @@ public class MyWebView extends WebView {
 
         setVerticalScrollBarEnabled(false);
         setHorizontalScrollBarEnabled(false);
-    }
-
-    private void skipPayment(String url) {
-        if (url.contains("platformapi/startapp")) {
-            Intent intent;
-            try {
-                intent = Intent.parseUri(url,
-                        Intent.URI_INTENT_SCHEME);
-                intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                intent.setComponent(null);
-                mContext.startActivity(intent);
-            } catch (Exception e) {
-                //e.printStackTrace();
-            }
-        }
-        else if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
-                && (url.contains("platformapi") && url.contains("startApp"))) {
-            Intent intent;
-            try {
-                intent = Intent.parseUri(url,
-                        Intent.URI_INTENT_SCHEME);
-                intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                intent.setComponent(null);
-                mContext.startActivity(intent);
-            } catch (Exception e) {
-                //e.printStackTrace();
-            }
-        } else if (url.startsWith("weixin://wap/pay?")) {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
-            mContext.startActivity(intent);
-        }
     }
 
     public interface IOpenFileChooser {
