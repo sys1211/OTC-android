@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
         wvOTC.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
 
         // 载入内容
-        wvOTC.loadUrl("https://dev.otcbase.com/mobile/account/sign-in");
+        wvOTC.loadUrl("https://www.otcbase.com/zh-CN/mobile/account/sign-in");
     }
 
     public void saveImage(String data) {
