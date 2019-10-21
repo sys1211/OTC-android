@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DrawableUtils;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,17 +74,11 @@ import static android.os.Environment.DIRECTORY_DCIM;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Nullable
-    @BindView(R.id.iv_go_back)
-    ImageView ivGoBack;
-    @BindView(R.id.iv_go_forward)
-    ImageView ivGoForward;
     @BindView(R.id.iv_reload)
     ImageView ivReload;
-
-
+    @BindView(R.id.iv_customer_service)
+    ImageView ivCustomerService;
     @BindView(R.id.otc_webView)
-    @Nullable
     MyWebView wvOTC;
 
 
@@ -91,21 +87,25 @@ public class MainActivity extends AppCompatActivity {
 
     private AnimationSet animationSet = new AnimationSet(true);
 
-    @OnClick({R.id.iv_go_back, R.id.iv_go_forward, R.id.iv_reload})
+    private boolean isClick = true;
+    @OnClick({R.id.iv_reload, R.id.iv_customer_service})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.iv_go_back:
-                if (wvOTC != null) {
-                    wvOTC.goBack();
-                }
-                break;
-            case R.id.iv_go_forward:
-                if (wvOTC != null) {
-                    wvOTC.goForward();
+            case R.id.iv_customer_service:
+                if (wvOTC.getProgressBar().getVisibility() == View.GONE){
+                    if (isClick){
+                        ivCustomerService.setImageDrawable(getResources().getDrawable(R.drawable.icon_customer_service_close));
+                    } else {
+                        ivCustomerService.setImageDrawable(getResources().getDrawable(R.drawable.icon_customer_service_open));
+                    }
+                    isClick = !isClick;
+                    wvOTC.loadUrl("javascript:window.toggleChatWidget()");
                 }
                 break;
             case R.id.iv_reload:
                 if (wvOTC != null) {
+                    isClick = true;
+                    ivCustomerService.setImageDrawable(getResources().getDrawable(R.drawable.icon_customer_service_open));
                     wvOTC.reload();
                 }
                 ivReload.startAnimation(animationSet);
@@ -119,12 +119,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(Color.TRANSPARENT);//将状态栏设置成透明色
-            getWindow().setNavigationBarColor(Color.TRANSPARENT);//将导航栏设置为透明色
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                getWindow().getDecorView()
-                        .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            }
+            getWindow().setStatusBarColor(getResources().getColor(R.color.colorCharcoalGrey));//将状态栏设置成透明色
+            getWindow().setNavigationBarColor(getResources().getColor(R.color.colorCharcoalGrey));//将导航栏设置为透明色
         }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -277,11 +273,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        String strAgent = "otcbase/" + BuildConfig.VERSION_CODE + "/" + BuildConfig.APPLICATION_ID;
+        wvOTC.getSettings().setUserAgentString(wvOTC.getSettings().getUserAgentString() + strAgent);
         wvOTC.getSettings().setJavaScriptEnabled(true);
         wvOTC.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
 
         // 载入内容
-        wvOTC.loadUrl("https://www.otcbase.com/zh-CN/mobile/account/sign-in");
+        wvOTC.loadUrl("https://dev.otcbase.com/mobile/account/sign-in");
     }
 
     public void saveImage(String data) {

@@ -38,7 +38,7 @@ import com.otcbase.merchant.utils.LogUtils;
 
 public class MyWebView extends WebView {
     private IOpenFileChooser openFileChooser;
-    private ProgressBar progressBar;
+    public ProgressBar progressBar;
     private Context mContext;
 
     public MyWebView(Context context) {
@@ -60,8 +60,8 @@ public class MyWebView extends WebView {
         this.openFileChooser = openFileChooser;
     }
 
-    public void setProgressBarColor(Drawable drawable){
-        progressBar.setProgressDrawable(drawable);
+    public ProgressBar getProgressBar(){
+        return progressBar;
     }
 
     private void init(final Context context) {
